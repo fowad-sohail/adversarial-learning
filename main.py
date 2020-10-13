@@ -3,12 +3,12 @@ import torch.nn as nn
 import torch.optim as optim
 import torchvision
 import torchvision.transforms as transforms
+import torch.nn.functional as F
 
 
 input_size = 3*32*32
 output_size = 10
 batch_size = 128
-
 
 
 # Generic base model structure for classification problem...extend-able to any problem...does not contain model architecture (i.e. no __init__ and __forward__ methods)
@@ -84,24 +84,13 @@ class CIFAR10Model(ImageClassificationBase):
 
 def load_model():
     model = CIFAR10Model()
-    model = torch.load('./4Oct.pth')
+    model = torch.load('./8Oct_model_cifar10_5layer.pth')
     model = model.eval()
     print(model)
 
     if torch.cuda.is_available():
         model = model.cuda()
     return model
-
-# def load_checkpoint(filepath):
-#     checkpoint = torch.load(filepath)
-#     model = checkpoint['model']
-#     model.load_state_dict(checkpoint['state_dict'])
-#     for parameter in model.parameters():
-#         parameter.requires_grad = False
-    
-#     model.eval()
-    
-#     return model
 
 
 # Downloads data to ./data directory
@@ -116,15 +105,39 @@ def load_cifar10():
                                             shuffle=False, num_workers=4)
     return test_loader
 
+# From Asim's colab
 def evaluate(model, val_loader):
     outputs = [model.validation_step(batch) for batch in val_loader]
     return model.validation_epoch_end(outputs)
 
+# From pytorch docs
+def test(model, device, test_loader):
+    model.eval()
+    test_loss = 0
+    correct = 0
+    with torch.no_grad():
+        for data, target in test_loader:
+            data, target = data.to(device), target.to(device)
+            output = model(data)
+            test_loss += torch.nn.functional.cross_entropy(output, target, reduction='sum').item()  # sum up batch loss
+            pred = output.argmax(dim=1, keepdim=True)  # get the index of the max log-probability
+            correct += pred.eq(target.view_as(pred)).sum().item()
+
+    test_loss /= len(test_loader.dataset)
+
+    print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
+        test_loss, correct, len(test_loader.dataset),
+        100. * correct / len(test_loader.dataset)))
+
 if __name__ == "__main__":
     model = load_model()
     test_loader = load_cifar10()
-    output = evaluate(model, test_loader)
+
+    # Three different ways to test, all throwing 'CIFAR10Model' object has no attribute 'fc1' error
+    # output = evaluate(model, test_loader)
     # output = model(test_loader)
-    prediction = torch.argmax(output)
-    print(prediction)
+    output = test(model, 'cuda', test_loader)
+
+    # prediction = torch.argmax(output)
+    # print(prediction)
 
