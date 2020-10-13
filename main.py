@@ -7,6 +7,7 @@ import torchvision.transforms as transforms
 
 input_size = 3*32*32
 output_size = 10
+batch_size = 128
 
 
 
@@ -89,32 +90,41 @@ def load_model():
 
     if torch.cuda.is_available():
         model = model.cuda()
-
-def load_checkpoint(filepath):
-    checkpoint = torch.load(filepath)
-    model = checkpoint['model']
-    model.load_state_dict(checkpoint['state_dict'])
-    for parameter in model.parameters():
-        parameter.requires_grad = False
-    
-    model.eval()
-    
     return model
 
+# def load_checkpoint(filepath):
+#     checkpoint = torch.load(filepath)
+#     model = checkpoint['model']
+#     model.load_state_dict(checkpoint['state_dict'])
+#     for parameter in model.parameters():
+#         parameter.requires_grad = False
+    
+#     model.eval()
+    
+#     return model
 
+
+# Downloads data to ./data directory
 def load_cifar10():
     transform = transforms.Compose(
     [transforms.ToTensor(),
      transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
-    testset = torchvision.datasets.CIFAR10(root='./data', train=False,
+    test_set = torchvision.datasets.CIFAR10(root='./data', train=False,
                                         download=True, transform=transform)
-    testloader = torch.utils.data.DataLoader(testset, batch_size=4,
-                                            shuffle=False, num_workers=2)
+    test_loader = torch.utils.data.DataLoader(test_set, batch_size=batch_size*2,
+                                            shuffle=False, num_workers=4)
+    return test_loader
 
-
+def evaluate(model, val_loader):
+    outputs = [model.validation_step(batch) for batch in val_loader]
+    return model.validation_epoch_end(outputs)
 
 if __name__ == "__main__":
-    load_model()
-    # load_checkpoint('./4Oct.pth')
-    # load_cifar10()
+    model = load_model()
+    test_loader = load_cifar10()
+    output = evaluate(model, test_loader)
+    # output = model(test_loader)
+    prediction = torch.argmax(output)
+    print(prediction)
+
