@@ -4,6 +4,8 @@ import torch.optim as optim
 import torchvision
 import torchvision.transforms as transforms
 import torch.nn.functional as F
+from art.estimators.classification import PyTorchClassifier
+from art.attacks.evasion import FastGradientMethod
 
 
 input_size = 3*32*32
@@ -103,7 +105,7 @@ def load_cifar10():
                                         download=True, transform=transform)
     test_loader = torch.utils.data.DataLoader(test_set, batch_size=batch_size*2,
                                             shuffle=False, num_workers=4)
-    return test_loader
+    return test_set, test_loader
 
 # From Asim's colab
 def evaluate(model, val_loader):
@@ -125,19 +127,22 @@ def test(model, device, test_loader):
 
     test_loss /= len(test_loader.dataset)
 
-    print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
+    
+    print('\tTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
         test_loss, correct, len(test_loader.dataset),
         100. * correct / len(test_loader.dataset)))
 
 if __name__ == "__main__":
     model = load_model()
-    test_loader = load_cifar10()
 
-    # Three different ways to test, all throwing 'CIFAR10Model' object has no attribute 'fc1' error
-    # output = evaluate(model, test_loader)
-    # output = model(test_loader)
-    output = test(model, 'cuda', test_loader)
+    # Test on normal CIFAR10
+    test_set, test_loader = load_cifar10()
+    print('\nTESTING ON NORMAL CIFAR10')
+    test(model, 'cuda', test_loader)
 
-    # prediction = torch.argmax(output)
-    # print(prediction)
-
+    # Test on adversarial CIFAR10
+    print('\nTESTING ON ADVERSARIAL CIFAR10')
+    ART_classifier = PyTorchClassifier(model=model, loss=nn.CrossEntropyLoss(), input_shape=input_size, nb_classes=10)
+    attack = FastGradientMethod(estimator=ART_classifier, eps=0.2)
+    adversarial_loader = attack.generate(x=test_set)
+    test(model, 'cuda', adversarial_loader)
