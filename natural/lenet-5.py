@@ -4,6 +4,7 @@ import torch.nn.functional as func
 import torch.optim as optim
 import torchvision
 import torchvision.transforms as transforms
+import numpy as np
 
 import os
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
