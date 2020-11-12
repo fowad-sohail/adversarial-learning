@@ -82,7 +82,7 @@ for epoch in range(num_epochs):
 
         # Track the accuracy
         total = labels.size(0)
-        _, predicted = np.max(outputs.cpu().numpy(), 1)
+        _, predicted = np.max(outputs.cpu().detach().numpy(), 1)
         correct = (predicted == labels).sum().item()
         acc_list.append(correct / total)
 
