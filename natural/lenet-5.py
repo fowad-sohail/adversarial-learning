@@ -51,46 +51,54 @@ class LeNet(nn.Module):
         x = self.fc3(x)
         return x
 
-net = LeNet()
+model = LeNet()
 
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(net.parameters(), lr=0.001)
+optimizer = optim.Adam(model.parameters(), lr=0.001)
 
+num_epochs = 2
 
-for epoch in range(2):  # loop over the dataset multiple times
-
-    running_loss = 0.0
-    for i, data in enumerate(train_loader, 0):
-        # get the inputs; data is a list of [inputs, labels]
-        inputs, labels = data
-
-        # zero the parameter gradients
-        optimizer.zero_grad()
-
-        # forward + backward + optimize
-        outputs = net(inputs)
+total_step = len(train_loader)
+loss_list = []
+acc_list = []
+for epoch in range(num_epochs):
+    for i, (images, labels) in enumerate(train_loader):
+        # Run the forward pass
+        outputs = model(images)
         loss = criterion(outputs, labels)
+        loss_list.append(loss.item())
+
+        # Backprop and perform Adam optimisation
+        optimizer.zero_grad()
         loss.backward()
         optimizer.step()
 
-        # print statistics
-        running_loss += loss.item()
-        if i % 2000 == 1999:    # print every 2000 mini-batches
-            print('[%d, %5d] loss: %.3f' %
-                  (epoch + 1, i + 1, running_loss / 2000))
-            running_loss = 0.0
+        # Track the accuracy
+        total = labels.size(0)
+        _, predicted = torch.max(outputs.data, 1)
+        correct = (predicted == labels).sum().item()
+        acc_list.append(correct / total)
+
+        if (i + 1) % 100 == 0:
+            print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}, Accuracy: {:.2f}%'
+                  .format(epoch + 1, num_epochs, i + 1, total_step, loss.item(),
+                          (correct / total) * 100))
 
 print('Finished Training')
 
-correct = 0
-total = 0
+# Test the model
+model.eval()
 with torch.no_grad():
-    for data in test_loader:
-        images, labels = data
-        outputs = net(images)
+    correct = 0
+    total = 0
+    for images, labels in test_loader:
+        outputs = model(images)
         _, predicted = torch.max(outputs.data, 1)
         total += labels.size(0)
         correct += (predicted == labels).sum().item()
+
+    print('Test Accuracy of the model on the 10000 test images: {} %'.format((correct / total) * 100))
+
 
 print('Accuracy of the network on the 10000 test images: %d %%' % (
     100 * correct / total))
