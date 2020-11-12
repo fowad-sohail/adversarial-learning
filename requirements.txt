@@ -1,5 +1,4 @@
 adversarial-robustness-toolbox==1.4.1
-bokeh==2.2.3
 certifi==2020.6.20
 cma==3.0.3
 cycler==0.10.0

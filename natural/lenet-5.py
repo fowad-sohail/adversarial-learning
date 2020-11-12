@@ -5,6 +5,11 @@ import torch.optim as optim
 import torchvision
 import torchvision.transforms as transforms
 
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+
+
+
 def load_cifar10():
     transform = transforms.Compose(
     [transforms.ToTensor(),
@@ -56,7 +61,7 @@ model = LeNet()
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
-num_epochs = 1
+num_epochs = 20
 
 total_step = len(train_loader)
 loss_list = []
@@ -85,24 +90,25 @@ for epoch in range(num_epochs):
                           (correct / total) * 100))
 
 print('Finished Training')
+train_acc = sum(acc_list) / len(acc_list)
+print('Training Accuracy: ' + str(train_acc))
 
 # Test the model
+val_loss_list = []
+val_acc_list = []
 model.eval()
 with torch.no_grad():
     correct = 0
     total = 0
     for images, labels in test_loader:
         outputs = model(images)
+        loss = criterion(outputs, labels)
+        val_loss_list.append(loss.item())
         _, predicted = torch.max(outputs.data, 1)
         total += labels.size(0)
         correct += (predicted == labels).sum().item()
+        val_acc_list.append((correct / total) * 100)
+
 
     print('Test Accuracy of the model on the 10000 test images: {} %'.format((correct / total) * 100))
 
-p = figure(y_axis_label='Loss', width=850, y_range=(0, 1), title='PyTorch ConvNet results')
-p.extra_y_ranges = {'Accuracy': Range1d(start=0, end=100)}
-p.add_layout(LinearAxis(y_range_name='Accuracy', axis_label='Accuracy (%)'), 'right')
-p.line(np.arange(len(loss_list)), loss_list)
-p.line(np.arange(len(loss_list)), np.array(acc_list) * 100, y_range_name='Accuracy', color='red')
-show(p)
-export_png(p, filename="lenet-5(natural).png")
