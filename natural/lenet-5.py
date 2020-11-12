@@ -63,7 +63,7 @@ model = LeNet().to(device)
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
-num_epochs = 20
+num_epochs = 100
 
 total_step = len(train_loader)
 loss_list = []
