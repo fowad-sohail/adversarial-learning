@@ -57,7 +57,7 @@ class LeNet(nn.Module):
         x = self.fc3(x)
         return x
 
-model = LeNet()
+model = LeNet().to(device)
 
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
@@ -70,9 +70,9 @@ acc_list = []
 for epoch in range(num_epochs):
     for i, (images, labels) in enumerate(train_loader):
         # Run the forward pass
-        outputs = model(images)
-        loss = criterion(outputs, labels)
-        loss_list.append(loss.item())
+        outputs = model(images.to(device))
+        loss = criterion(outputs, labels.to(device))
+        loss_list.append(loss.detach().cpu().numpy().item())
 
         # Backprop and perform Adam optimisation
         optimizer.zero_grad()
@@ -81,7 +81,7 @@ for epoch in range(num_epochs):
 
         # Track the accuracy
         total = labels.size(0)
-        _, predicted = torch.max(outputs.data, 1)
+        _, predicted = np.max(outputs.cpu().numpy(), 1)
         correct = (predicted == labels).sum().item()
         acc_list.append(correct / total)
 
@@ -102,9 +102,9 @@ with torch.no_grad():
     correct = 0
     total = 0
     for images, labels in test_loader:
-        outputs = model(images)
-        loss = criterion(outputs, labels)
-        val_loss_list.append(loss.item())
+        outputs = model(images.to(device))
+        loss = criterion(outputs, labels.to(device))
+        val_loss_list.append(loss.detach().cpu().numpy().item())
         _, predicted = torch.max(outputs.data, 1)
         total += labels.size(0)
         correct += (predicted == labels).sum().item()
