@@ -63,7 +63,7 @@ model = LeNet().to(device)
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
-num_epochs = 20
+num_epochs = 1
 
 total_step = len(train_loader)
 loss_list = []
@@ -106,7 +106,7 @@ with torch.no_grad():
         outputs = model(images.to(device))
         loss = criterion(outputs, labels.to(device))
         val_loss_list.append(loss.detach().cpu().numpy().item())
-        _, predicted = torch.max(outputs.data, 1)
+        _, predicted = torch.max(outputs.data.detach().cpu(), 1)
         total += labels.size(0)
         correct += (predicted == labels).sum().item()
         val_acc_list.append((correct / total) * 100)
