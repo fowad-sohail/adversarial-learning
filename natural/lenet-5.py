@@ -41,5 +41,4 @@ class LeNet(nn.Module):
 
 model = LeNet().to(device)
 
-
 train_test(model, device, train_loader, test_loader)

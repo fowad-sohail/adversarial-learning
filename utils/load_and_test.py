@@ -27,7 +27,7 @@ def load_cifar10():
 
 
 
-def train_test(model, device, train_loader, test_loader):
+def train(model, device, train_loader):
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
 
@@ -63,6 +63,7 @@ def train_test(model, device, train_loader, test_loader):
     train_acc = sum(acc_list) / len(acc_list)
     print('Training Accuracy: ' + str(train_acc))
 
+def test(model, device, test_loader):
     # Test the model
     val_loss_list = []
     val_acc_list = []
