@@ -6,7 +6,7 @@ import torchvision
 import torchvision.transforms as transforms
 import numpy as np
 
-from ..utils.data_loader import load_cifar10
+from utils.data_loader import load_cifar10
 
 import os
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
