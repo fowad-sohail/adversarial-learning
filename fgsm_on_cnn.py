@@ -141,5 +141,3 @@ for eps in epsilons:
     acc, ex = test(model, device, test_loader, eps)
     accuracies.append(acc)
     examples.append(ex)
-
-

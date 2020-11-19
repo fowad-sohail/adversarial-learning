@@ -31,7 +31,7 @@ def train(model, device, train_loader):
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
 
-    num_epochs = 100
+    num_epochs = 30
 
     total_step = len(train_loader)
     loss_list = []
@@ -64,6 +64,7 @@ def train(model, device, train_loader):
     print('Training Accuracy: ' + str(train_acc))
 
 def test(model, device, test_loader):
+    criterion = nn.CrossEntropyLoss()
     # Test the model
     val_loss_list = []
     val_acc_list = []
