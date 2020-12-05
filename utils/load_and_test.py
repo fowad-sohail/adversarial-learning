@@ -118,7 +118,7 @@ def adversarial_test(model, device, test_loader, epsilon ):
         
         print()
         print(init_pred)
-        print(target.argmax(1, keepdim=True)[1])
+        print(target.argmax(0, keepdim=True)[1])
         print('---')
         print(init_pred.cpu().item())
         print(target.argmax(0, keepdim=True)[1].cpu().item())
