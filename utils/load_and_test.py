@@ -127,17 +127,17 @@ def adversarial_test(model, device, test_loader, epsilon ):
         output = model(perturbed_data)
 
         # Check for success
-        final_pred = output.max(1)[1] # get the index of the max log-probability
+        final_pred = output.max(1, keepdim=True)[1] # get the index of the max log-probability
 
         print()
         print(final_pred)
         print(target)
         print('--------')
-        print(final_pred.item())
-        print(target.item())
+        print(final_pred[1][1])
+        print(target[1])
         print('--------')
 
-        if final_pred.item() == target.item():
+        if final_pred[1][1] == target[1]:
             correct += 1
             # Special case for saving 0 epsilon examples
             if (epsilon == 0) and (len(adv_examples) < 5):
