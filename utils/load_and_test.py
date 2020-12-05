@@ -133,7 +133,11 @@ def adversarial_test(model, device, test_loader, epsilon ):
         print(final_pred)
         print(target)
         print('--------')
-        if final_pred == target:
+        print(final_pred.item())
+        print(target.item())
+        print('--------')
+
+        if final_pred.item() == target.item():
             correct += 1
             # Special case for saving 0 epsilon examples
             if (epsilon == 0) and (len(adv_examples) < 5):
