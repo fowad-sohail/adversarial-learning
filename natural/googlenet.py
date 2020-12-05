@@ -26,11 +26,11 @@ test(model, device, test_loader)
 
 accuracies = []
 examples = []
+epsilons = [0, .05, .1, .15, .2, .25, .3]
 
 # Run test for each epsilon
 for eps in epsilons:
     acc, ex = adversarial_test(model, device, test_loader, eps)
     accuracies.append(acc)
     examples.append(ex)
-
 

@@ -103,9 +103,9 @@ def adversarial_test( model, device, test_loader, epsilon ):
         output = model(data)
         init_pred = output.max(1, keepdim=True)[1] # get the index of the max log-probability
 
-        # If the initial prediction is wrong, dont bother attacking, just move on
-        if init_pred.item() != target.item():
-            continue
+        # # If the initial prediction is wrong, dont bother attacking, just move on
+        # if init_pred.item() != target.item():
+        #     continue
 
         # Calculate the loss
         loss = F.nll_loss(output, target)
