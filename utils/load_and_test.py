@@ -116,11 +116,11 @@ def adversarial_test(model, device, test_loader, epsilon ):
         
         print()
         print(init_pred)
-        print(target.argmax(0, keepdim=True)[1])
+        print(target.argmax(0, keepdim=True))
         print('---')
         print('ITEMS')
         print(init_pred.cpu().item())
-        print(target.argmax(0, keepdim=True)[1].cpu().item())
+        print(target.argmax(0, keepdim=True).cpu().item())
         # If the initial prediction is wrong, dont bother attacking, just move on
         if init_pred.item() != target.item():
             continue
