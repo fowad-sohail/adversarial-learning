@@ -121,12 +121,18 @@ def adversarial_test(model, device, test_loader, epsilon ):
         print('ITEMS')
         print(init_pred.cpu().item())
         print(target.argmax(0, keepdim=True).cpu().item())
+
+
+
+        fixed_init_pred = init_pred.cpu()
+        fixed_target = target.argmax(0, keepdim=True).cpu()
+
         # If the initial prediction is wrong, dont bother attacking, just move on
-        if init_pred.item() != target.item():
+        if fixed_init_pred.item() != fixed_target.item():
             continue
 
         # Calculate the loss
-        loss = F.nll_loss(output, target)
+        loss = F.nll_loss(output, fixed_target)
 
         # Zero all existing gradients
         model.zero_grad()
@@ -145,17 +151,17 @@ def adversarial_test(model, device, test_loader, epsilon ):
 
         # Check for success
         final_pred = output.max(1, keepdim=True)[1] # get the index of the max log-probability
-        if final_pred.item() == target.item():
+        if final_pred.cpu().item() == fixed_target.item():
             correct += 1
             # Special case for saving 0 epsilon examples
             if (epsilon == 0) and (len(adv_examples) < 5):
                 adv_ex = perturbed_data.squeeze().detach().cpu().numpy()
-                adv_examples.append( (init_pred.item(), final_pred.item(), adv_ex) )
+                adv_examples.append( (fixed_init_pred.item(), final_pred.cpu().item(), adv_ex) )
         else:
             # Save some adv examples for visualization later
             if len(adv_examples) < 5:
                 adv_ex = perturbed_data.squeeze().detach().cpu().numpy()
-                adv_examples.append( (init_pred.item(), final_pred.item(), adv_ex) )
+                adv_examples.append( (fixed_init_pred.item(), final_pred.cpu().item(), adv_ex) )
 
     # Calculate final accuracy for this epsilon
     final_acc = correct/float(len(test_loader))
