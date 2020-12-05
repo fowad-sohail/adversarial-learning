@@ -85,8 +85,18 @@ def test(model, device, test_loader):
         print('Test Accuracy of the model on the 10000 test images: {} %'.format((correct / total) * 100))
 
 
+def fgsm_attack(image, epsilon, data_grad):
+    # Collect the element-wise sign of the data gradient
+    sign_data_grad = data_grad.sign()
+    # Create the perturbed image by adjusting each pixel of the input image
+    perturbed_image = image + epsilon*sign_data_grad
+    # Adding clipping to maintain [0,1] range
+    perturbed_image = torch.clamp(perturbed_image, 0, 1)
+    # Return the perturbed image
+    return perturbed_image
+
 def adversarial_test(model, device, test_loader, epsilon ):
-    model.eval()
+   model.eval()
     # Accuracy counter
     correct = 0
     adv_examples = []
@@ -104,9 +114,9 @@ def adversarial_test(model, device, test_loader, epsilon ):
         output = model(data)
         init_pred = output.max(1, keepdim=True)[1] # get the index of the max log-probability
 
-        # # If the initial prediction is wrong, dont bother attacking, just move on
-        # if init_pred.item() != target.item():
-        #     continue
+        # If the initial prediction is wrong, dont bother attacking, just move on
+        if init_pred.item() != target.item():
+            continue
 
         # Calculate the loss
         loss = F.nll_loss(output, target)
@@ -128,16 +138,7 @@ def adversarial_test(model, device, test_loader, epsilon ):
 
         # Check for success
         final_pred = output.max(1, keepdim=True)[1] # get the index of the max log-probability
-
-        print()
-        print(final_pred)
-        print(target)
-        print('--------')
-        print(final_pred[0])
-        print(target[1])
-        print('--------')
-
-        if final_pred[0] == target[1]:
+        if final_pred.item() == target.item():
             correct += 1
             # Special case for saving 0 epsilon examples
             if (epsilon == 0) and (len(adv_examples) < 5):
@@ -155,13 +156,3 @@ def adversarial_test(model, device, test_loader, epsilon ):
 
     # Return the accuracy and an adversarial example
     return final_acc, adv_examples
-
-def fgsm_attack(image, epsilon, data_grad):
-    # Collect the element-wise sign of the data gradient
-    sign_data_grad = data_grad.sign()
-    # Create the perturbed image by adjusting each pixel of the input image
-    perturbed_image = image + epsilon*sign_data_grad
-    # Adding clipping to maintain [0,1] range
-    perturbed_image = torch.clamp(perturbed_image, 0, 1)
-    # Return the perturbed image
-    return perturbed_image
