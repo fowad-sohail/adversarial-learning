@@ -85,7 +85,8 @@ def test(model, device, test_loader):
         print('Test Accuracy of the model on the 10000 test images: {} %'.format((correct / total) * 100))
 
 
-def adversarial_test( model, device, test_loader, epsilon ):
+def adversarial_test(model, device, test_loader, epsilon ):
+    model.eval()
     # Accuracy counter
     correct = 0
     adv_examples = []
@@ -127,7 +128,7 @@ def adversarial_test( model, device, test_loader, epsilon ):
 
         # Check for success
         final_pred = output.max(1, keepdim=True)[1] # get the index of the max log-probability
-        if final_pred.item().numpy() == target.item().numpy():
+        if final_pred == target:
             correct += 1
             # Special case for saving 0 epsilon examples
             if (epsilon == 0) and (len(adv_examples) < 5):
