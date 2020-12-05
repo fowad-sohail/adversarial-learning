@@ -132,7 +132,7 @@ def adversarial_test(model, device, test_loader, epsilon ):
             continue
 
         # Calculate the loss
-        loss = F.nll_loss(output, fixed_target)
+        loss = F.nll_loss(output, target)
 
         # Zero all existing gradients
         model.zero_grad()
