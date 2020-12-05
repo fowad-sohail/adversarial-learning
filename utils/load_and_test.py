@@ -114,15 +114,6 @@ def adversarial_test(model, device, test_loader, epsilon ):
         output = model(data)
         init_pred = output.argmax(1, keepdim=True)[1] # get the index of the max log-probability
         
-        print()
-        print(init_pred)
-        print(target.argmax(0, keepdim=True))
-        print('---')
-        print('ITEMS')
-        print(init_pred.cpu().item())
-        print(target.argmax(0, keepdim=True).cpu().item())
-
-
 
         fixed_init_pred = init_pred.cpu()
         fixed_target = target.argmax(0, keepdim=True).cpu()
@@ -151,8 +142,6 @@ def adversarial_test(model, device, test_loader, epsilon ):
 
         # Check for success
         final_pred = output.argmax(1, keepdim=True)[1] # get the index of the max log-probability
-        print()
-        print(final_pred)
         if final_pred.cpu().item() == fixed_target.item():
             correct += 1
             # Special case for saving 0 epsilon examples
