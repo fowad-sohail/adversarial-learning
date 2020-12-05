@@ -155,8 +155,8 @@ def adversarial_test(model, device, test_loader, epsilon ):
                 adv_examples.append( (fixed_init_pred.item(), final_pred.cpu().item(), adv_ex) )
 
     # Calculate final accuracy for this epsilon
-    final_acc = correct/float(len(test_loader))
-    print("Epsilon: {}\tTest Accuracy = {} / {} = {}".format(epsilon, correct, len(test_loader), final_acc))
+    final_acc = correct/float(len(test_loader))*100
+    print("Epsilon: {}\tTest Accuracy = {} / {} = {} %".format(epsilon, correct, len(test_loader), final_acc))
 
     # Return the accuracy and an adversarial example
     return final_acc, adv_examples
