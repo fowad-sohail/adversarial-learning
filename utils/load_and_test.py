@@ -96,7 +96,7 @@ def fgsm_attack(image, epsilon, data_grad):
     return perturbed_image
 
 def adversarial_test(model, device, test_loader, epsilon ):
-   model.eval()
+    model.eval()
     # Accuracy counter
     correct = 0
     adv_examples = []
