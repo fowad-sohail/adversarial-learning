@@ -112,6 +112,8 @@ def adversarial_test(model, device, test_loader, epsilon ):
 
         # Forward pass the data through the model
         output = model(data)
+        print(output)
+        print(output.max(1, keepdim=True))
         init_pred = output.argmax(1, keepdim=True)[1] # get the index of the max log-probability
         
         print()
