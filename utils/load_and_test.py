@@ -113,7 +113,13 @@ def adversarial_test(model, device, test_loader, epsilon ):
         # Forward pass the data through the model
         output = model(data)
         init_pred = output.argmax(1, keepdim=True)[1] # get the index of the max log-probability
-
+        
+        print()
+        print(init_pred)
+        print(target)
+        print('---')
+        print(init_pred.item())
+        print(target.item())
         # If the initial prediction is wrong, dont bother attacking, just move on
         if init_pred.item() != target.item():
             continue
