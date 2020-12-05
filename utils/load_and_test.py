@@ -127,7 +127,7 @@ def adversarial_test( model, device, test_loader, epsilon ):
 
         # Check for success
         final_pred = output.max(1, keepdim=True)[1] # get the index of the max log-probability
-        if final_pred.item() == target.item():
+        if final_pred.item().numpy() == target.item().numpy():
             correct += 1
             # Special case for saving 0 epsilon examples
             if (epsilon == 0) and (len(adv_examples) < 5):
