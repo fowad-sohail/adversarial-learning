@@ -125,10 +125,9 @@ def adversarial_test(model, device, test_loader, epsilon ):
 
         # Re-classify the perturbed image
         output = model(perturbed_data)
-        print(output)
 
         # Check for success
-        final_pred = output.max(1, keepdim=True)[1] # get the index of the max log-probability
+        final_pred = output.max(1)[1] # get the index of the max log-probability
 
         print()
         print(final_pred)
