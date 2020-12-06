@@ -18,10 +18,10 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 print(device)
 
 
-model = torch.hub.load('pytorch/vision:v0.6.0', 'googlenet', pretrained=False)
+model = torch.hub.load('pytorch/vision:v0.6.0', 'googlenet', pretrained=True)
 model.to(device)
 
-train(model, device, train_loader)
+# train(model, device, train_loader)
 test(model, device, test_loader)
 
 accuracies = []
