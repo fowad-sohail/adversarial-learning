@@ -28,9 +28,8 @@ class MLP(nn.Module):
         self.fc1 = nn.Linear(32*32, 512)
         # linear layer (n_hidden -> hidden_2)
         self.fc2 = nn.Linear(512,512)
-        self.fc3 = nn.Linear(512,256)
         # linear layer (n_hidden -> 10)
-        self.fc4 = nn.Linear(256,10)
+        self.fc3 = nn.Linear(512,10)
         # dropout layer (p=0.2)
         # dropout prevents overfitting of data
         self.droput = nn.Dropout(0.2)
@@ -46,10 +45,8 @@ class MLP(nn.Module):
         x = F.relu(self.fc2(x))
         # add dropout layer
         x = self.droput(x)
-        x = F.relu(self.fc3(x))
-        x = self.droput(x)
         # add output layer
-        x = self.fc4(x)
+        x = self.fc3(x)
         return x
 
 
