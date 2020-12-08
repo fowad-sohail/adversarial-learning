@@ -28,8 +28,6 @@ class MLP(nn.Module):
         self.droput = nn.Dropout(0.2)
         
     def forward(self,x):
-        print(x.shape)
-        print('------------------')
         x = x.view(-1,3*32*32)
         x = F.relu(self.fc1(x))
         x = self.droput(x)
