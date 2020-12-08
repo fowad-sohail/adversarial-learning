@@ -46,6 +46,8 @@ class MLP(nn.Module):
         x = F.relu(self.fc2(x))
         # add dropout layer
         x = self.droput(x)
+        x = F.relu(self.fc3(x))
+        x = self.droput(x)
         # add output layer
         x = self.fc4(x)
         return x
