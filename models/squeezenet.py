@@ -19,7 +19,7 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 print(device)
 
 
-model = models.squeezenet1_0()
+model = models.squeezenet1_0(pretrained=True)
 model.to(device)
 
 train(model, device, train_loader)
