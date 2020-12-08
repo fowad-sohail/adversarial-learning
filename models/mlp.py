@@ -20,7 +20,7 @@ print(device)
 
 class MLP(nn.Module):
     def __init__(self):
-        super(Net,self).__init__()
+        super(MLP,self).__init__()
         # number of hidden nodes in each layer (512)
         hidden_1 = 512
         hidden_2 = 512
