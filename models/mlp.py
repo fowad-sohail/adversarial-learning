@@ -21,32 +21,23 @@ print(device)
 class MLP(nn.Module):
     def __init__(self):
         super(MLP,self).__init__()
-        # number of hidden nodes in each layer (512)
-        hidden_1 = 512
-        hidden_2 = 512
-        # linear layer (784 -> hidden_1)
         self.fc1 = nn.Linear(32*32, 512)
-        # linear layer (n_hidden -> hidden_2)
         self.fc2 = nn.Linear(512,512)
-        # linear layer (n_hidden -> 10)
-        self.fc3 = nn.Linear(512,10)
-        # dropout layer (p=0.2)
-        # dropout prevents overfitting of data
+        self.fc3 = nn.Linear(512,256)
+        self.fc4 = nn.Linear(256,10)
         self.droput = nn.Dropout(0.2)
         
     def forward(self,x):
-        # flatten image input
+        print(x.shape)
+        print('------------------')
         x = x.view(-1,32*32)
-        # add hidden layer, with relu activation function
         x = F.relu(self.fc1(x))
-        # add dropout layer
         x = self.droput(x)
-         # add hidden layer, with relu activation function
         x = F.relu(self.fc2(x))
-        # add dropout layer
         x = self.droput(x)
-        # add output layer
-        x = self.fc3(x)
+        x = F.relu(self.fc3(x))
+        x = self.droput(x)
+        x = self.fc4(x)
         return x
 
 
