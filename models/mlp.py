@@ -25,7 +25,7 @@ class MLP(nn.Module):
         hidden_1 = 512
         hidden_2 = 512
         # linear layer (784 -> hidden_1)
-        self.fc1 = nn.Linear(28*28, 512)
+        self.fc1 = nn.Linear(32*32, 512)
         # linear layer (n_hidden -> hidden_2)
         self.fc2 = nn.Linear(512,512)
         self.fc3 = nn.Linear(512,256)
@@ -37,7 +37,7 @@ class MLP(nn.Module):
         
     def forward(self,x):
         # flatten image input
-        x = x.view(-1,28*28)
+        x = x.view(-1,32*32)
         # add hidden layer, with relu activation function
         x = F.relu(self.fc1(x))
         # add dropout layer
