@@ -18,7 +18,7 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 print(device)
 
 
-model = torch.hub.load('pytorch/vision:v0.6.0', 'inception_v3', pretrained=True)
+model = torch.hub.load('pytorch/vision:v0.6.0', 'inception_v3', pretrained=True, aux_logits=False)
 model.to(device)
 
 train(model, device, train_loader)
