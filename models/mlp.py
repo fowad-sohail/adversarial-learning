@@ -30,7 +30,7 @@ class MLP(nn.Module):
     def forward(self,x):
         print(x.shape)
         print('------------------')
-        x = x.view(-1,32*32)
+        x = x.view(-1,3*32*32)
         x = F.relu(self.fc1(x))
         x = self.droput(x)
         x = F.relu(self.fc2(x))
