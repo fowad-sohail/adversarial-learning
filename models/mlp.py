@@ -49,9 +49,18 @@ accuracies = []
 examples = []
 epsilons = [0, .05, .1, .15, .2, .25, .3]
 
+
 # Run test for each epsilon
 for eps in epsilons:
+    # FGSM
     acc, ex = adversarial_test(model, device, test_loader, eps)
+    accuracies.append(acc)
+    examples.append(ex)
+    # CW attack
+    cw_acc, cw_ex = adversarial_test_cw(model, device, test_loader, epsilon)
+    accuracies.append(acc)
+    examples.append(ex)
+    cw_acc, cw_ex = adversarial_test_pgd(model, device, test_loader, epsilon)
     accuracies.append(acc)
     examples.append(ex)
 

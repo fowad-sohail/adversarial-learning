@@ -9,7 +9,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 import sys
 sys.path.insert(1, './utils/')
-from load_and_test import load_cifar10, train, test, adversarial_test
+from load_and_test import load_cifar10, train, test, adversarial_test, adversarial_test_cw, adversarial_test_pgd
 
 
 train_loader, test_loader = load_cifar10()
@@ -31,7 +31,16 @@ epsilons = [0, .05, .1, .15, .2, .25, .3]
 
 # Run test for each epsilon
 for eps in epsilons:
+    # FGSM
     acc, ex = adversarial_test(model, device, test_loader, eps)
     accuracies.append(acc)
     examples.append(ex)
+    # CW attack
+    cw_acc, cw_ex = adversarial_test_cw(model, device, test_loader, epsilon)
+    accuracies.append(acc)
+    examples.append(ex)
+    cw_acc, cw_ex = adversarial_test_pgd(model, device, test_loader, epsilon)
+    accuracies.append(acc)
+    examples.append(ex)
+
 
